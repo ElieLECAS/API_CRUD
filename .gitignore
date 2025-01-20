@@ -1,0 +1,31 @@
+# Fichiers et dossiers Python
+*.pyc
+*.pyo
+__pycache__/
+
+# Dossiers d'environnement virtuel
+venv/
+.env/
+
+# Fichiers de configuration d'IDE
+.vscode/
+.idea/
+
+# Fichiers de configuration de l'éditeur
+*.swp
+*.swo
+
+# Fichiers de log
+*.log
+
+# Fichiers de cache
+*.cache
+*.egg-info/
+dist/
+build/
+
+# Configuration spécifique pour Docker (si utilisée)
+*.env
+
+# Configuration pour des bases de données locales
+*.sqlite
