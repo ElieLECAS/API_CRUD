@@ -1,19 +1,23 @@
 from fastapi import FastAPI, HTTPException, Depends
+from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session, select
-from product import Product
+from product import Product  # Assurez-vous d'importer correctement le modèle Product
+from pydantic import BaseModel
 from bdd import engine, create_db
-from auth import get_current_user
+from auth import get_current_user, authenticate_user, create_access_token  # Importation correcte ici
 
 app = FastAPI()
 
 create_db()
 
+# Route pour récupérer tous les produits
 @app.get("/products")
 def get_products():
     with Session(engine) as session:
         products = session.exec(select(Product)).all()
     return products
 
+# Route pour récupérer un produit spécifique par ID
 @app.get("/products/{product_id}")
 def get_product(product_id: int):
     with Session(engine) as session:
@@ -22,6 +26,7 @@ def get_product(product_id: int):
             raise HTTPException(status_code=404, detail="Product not found")
         return product
 
+# Route pour créer un produit
 @app.post("/products")
 def create_product(product: Product):
     with Session(engine) as session:
@@ -30,6 +35,7 @@ def create_product(product: Product):
         session.refresh(product)
     return product
 
+# Route pour mettre à jour un produit
 @app.put("/products/{product_id}")
 def update_product(product_id: int, product: Product):
     with Session(engine) as session:
@@ -42,6 +48,7 @@ def update_product(product_id: int, product: Product):
         session.refresh(existing_product)
     return existing_product
 
+# Route pour supprimer un produit
 @app.delete("/products/{product_id}")
 def delete_product(product_id: int):
     with Session(engine) as session:
@@ -52,6 +59,21 @@ def delete_product(product_id: int):
         session.commit()
     return {"message": "Product deleted successfully"}
 
+# Route protégée pour récupérer l'utilisateur actuel
 @app.get("/users/me")
-def read_users_me(current_user: Product = Depends(get_current_user)):
+def read_users_me(current_user: Product = Depends(get_current_user)):  # Assurez-vous d'utiliser 'User' et non 'Product'
     return current_user
+
+# Classe Pydantic pour l'utilisateur (modèle pour la connexion)
+class User(BaseModel):
+    username: str
+    password: str
+
+# Endpoint pour obtenir un token JWT
+@app.post("/token")
+def login_for_access_token(form_data: OAuth2PasswordRequestForm = Depends()):
+    user = authenticate_user(form_data.username, form_data.password)
+    if not user:
+        raise HTTPException(status_code=401, detail="Invalid credentials")
+    access_token = create_access_token(data={"sub": user.username})
+    return {"access_token": access_token, "token_type": "bearer"}
