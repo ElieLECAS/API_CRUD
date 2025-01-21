@@ -3,12 +3,10 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session, select
 from product import Product  # Assurez-vous d'importer correctement le modèle Product
 from pydantic import BaseModel
-from bdd import engine, create_db
+from bdd import engine
 from auth import get_current_user, authenticate_user, create_access_token  # Importation correcte ici
 
 app = FastAPI()
-
-create_db()
 
 # Route pour récupérer tous les produits
 @app.get("/products")
