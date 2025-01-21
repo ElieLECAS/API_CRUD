@@ -3,11 +3,9 @@ from fastapi.security import OAuth2PasswordRequestForm
 from sqlmodel import Session, select
 from product import Product
 from pydantic import BaseModel
-from bdd import engine, create_db
+from bdd import engine
 
 app = FastAPI()
-
-# create_db()
 
 # Route pour récupérer tous les produits
 @app.get("/products")

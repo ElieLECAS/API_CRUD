@@ -13,6 +13,3 @@ DRIVER = os.getenv('DRIVER')
 SQL_DATABASE_URL = f"mssql+pyodbc://{DB_USER}:{DB_PASSWORD}@{DB_SERVER}/{DB_NAME}?driver={DRIVER}"
 
 engine = create_engine(SQL_DATABASE_URL, echo=True)
-
-def create_db():
-    SQLModel.metadata.create_all(engine)
