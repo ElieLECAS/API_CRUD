@@ -1,12 +1,10 @@
 from fastapi import FastAPI, HTTPException, Depends
 from sqlmodel import Session, select
 from product import Product
-from bdd import engine, create_db
+from bdd import engine
 from auth import get_current_user
 
 app = FastAPI()
-
-create_db()
 
 @app.get("/products")
 def get_products():
